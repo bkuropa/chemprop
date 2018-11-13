@@ -3,6 +3,7 @@ import math
 from typing import List
 
 import numpy as np
+from tqdm import tqdm
 from torch.utils.data.dataset import Dataset
 
 from .scaler import StandardScaler
@@ -110,7 +111,7 @@ class MoleculeDataset(Dataset):
                 scaler = self.scaler
             else:
                 features = np.vstack([d.features for d in self.data])
-                scaler = StandardScaler()
+                scaler = StandardScaler(replace_nan_token=0)
                 scaler.fit(features)
                 self.scaler = scaler
 
