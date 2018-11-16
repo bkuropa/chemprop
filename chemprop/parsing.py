@@ -43,7 +43,7 @@ def add_train_args(parser: ArgumentParser):
     parser.add_argument('--features_only', action='store_true', default=False,
                         help='Use only the additional features in an FFN, no graph network')
     parser.add_argument('--features_generator', type=str, nargs='*', choices=['morgan', 'morgan_count', 'rdkit_2d'],
-                        help='Method of generating additional features') #TODO allow multiple options
+                        help='Method of generating additional features')  # TODO allow multiple options
     parser.add_argument('--features_path', type=str,
                         help='Path to features to use in FNN (instead of features_generator)')
     parser.add_argument('--predict_features', action='store_true', default=False,
@@ -141,6 +141,11 @@ def add_train_args(parser: ArgumentParser):
                         help='Maximum gradient norm when performing gradient clipping')
     parser.add_argument('--weight_decay', type=float, default=0.0,
                         help='L2 penalty on optimizer to keep parameter norms small')
+    parser.add_argument('--bert_mask_prob', type=float, default=0.15,
+                        help='Probability of masking when dataset_type == "bert_pretraining"')
+    parser.add_argument('--bert_vocab_func', type=str, default='atom_features',
+                        choices=['atom', 'atom_features'],
+                        help='Vocab function when dataset_type == "bert_pretraining"')
 
     # Model arguments
     parser.add_argument('--ensemble_size', type=int, default=1,
@@ -327,6 +332,7 @@ def modify_train_args(args: Namespace):
             break
     else:
         args.prespecified_chunk_dir = None
+
 
 def parse_hyper_opt_args() -> Namespace:
     """Parses arguments for hyperparameter optimization (includes training arguments)."""
