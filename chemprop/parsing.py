@@ -151,6 +151,9 @@ def add_train_args(parser: ArgumentParser):
     parser.add_argument('--bert_vocab_func', type=str, default='atom_features',
                         choices=['atom', 'atom_features'],
                         help='Vocab function when dataset_type == "bert_pretraining"')
+    parser.add_argument('--last_batch', action='store_true', default=False,
+                        help='Whether to include the last batch in each training epoch even if'
+                             'it\'s less than the batch size')
 
     # Model arguments
     parser.add_argument('--ensemble_size', type=int, default=1,
