@@ -125,7 +125,7 @@ We compared our model against the graph convolution in deepchem. Our results are
 Results on classification datasets (AUC score, the higher the better)
 
 | Dataset | Size |	Ours |	GraphConv (deepchem) |
-| :----: | :---: |:---:| :---:|
+| :---: | :---: | :---: | :---: |
 | Bace | 1,513 | 0.884 ± 0.034	| 0.783 ± 0.014 |
 | BBBP | 2,039 | 0.922 ± 0.012	| 0.690 ± 0.009 |
 | Tox21 | 7,831 | 0.851 ± 0.015	| 0.829 ± 0.006 |
@@ -139,7 +139,7 @@ Results on classification datasets (AUC score, the higher the better)
 Results on regression datasets (score, the lower the better)
 
 Dataset | Size | Ours | GraphConv/MPNN (deepchem) |
-| :---: |:---:| :---:| :---: |
+| :---: | :---: | :---: | :---: |
 delaney	| 1,128 | 0.687 ± 0.037 | 	0.58 ± 0.03 |
 Freesolv | 642 |	0.915 ± 0.154	| 1.15 ± 0.12 |
 Lipo | 4,200 |	0.565 ± 0.052 |	0.655 ± 0.036 |
@@ -148,4 +148,5 @@ qm9 | 133,885 |	2.47 ± 0.036*	| 3.2 ± 1.5 |
 
 *MUV, HIV, PCBA are using an older version of the model. qm9 is using virtual edges with depth 3 and hidden size 1800.
 Others are using hidden size 1800, depth 6, master node with otherwise default settings.
-We did a few hyperparameter experiments on qm9, but did no searching on the other datasets, so there may still be further room for improvement, for example checking if we're overfitting on the smaller sets. 
+We did a few hyperparameter experiments on qm9, but did no searching on the other datasets, so there may still be further room for improvement, for example checking if we're overfitting on the smaller sets.
+ 
