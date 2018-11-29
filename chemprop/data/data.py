@@ -48,6 +48,7 @@ class MoleculeDatapoint:
             self.bert_pretraining = args.dataset_type == 'bert_pretraining'
             self.bert_mask_prob = args.bert_mask_prob
             self.bert_mask_type = args.bert_mask_type
+            self.nce_pretraining = args.dataset_type == 'nce_pretraining'
         else:
             features_generator = None
             predict_features = sparse = self.bert_pretraining = False
@@ -173,6 +174,11 @@ class MoleculeDataset(Dataset):
     def __init__(self, data: List[MoleculeDatapoint]):
         self.data = data
         self.bert_pretraining = self.data[0].bert_pretraining if len(self.data) > 0 else False
+        self.nce_pretraining = self.data[0].bert_pretraining if len(self.data) > 0 else False
+        if self.nce_pretraining:
+            self.next_data = data[:-1]
+            self.data = data[1:]
+            self.pairs = [(self.data[i], self.next_data[i]) for i in range(len(self.data))]
         self.features_size = len(self.data[0].features) if len(self.data) > 0 and self.data[0].features is not None else None
         self.scaler = None
     
@@ -245,6 +251,8 @@ class MoleculeDataset(Dataset):
             random.seed(seed)
 
         random.shuffle(self.data)
+        if self.nce_pretraining:
+            random.shuffle(self.pairs)
 
         if self.bert_pretraining:
             for d in self.data:
@@ -302,3 +310,7 @@ def parallel_bert_init(pair: Tuple[MoleculeDatapoint, Namespace]) -> MoleculeDat
     d.bert_init(args)
 
     return d
+
+# class NCEDataset(Dataset):
+#     def __init__(self, mol_dataset: MoleculeDataset):
+#         self.dataset = mol_dataset

@@ -378,3 +378,24 @@ class MayrLinear(nn.Module):
         self.training = mode
 
         return self
+
+class NCEFFN(nn.Module):
+    def __init__(self, input_dim):
+        super(NCEFFN, self).__init__()
+        self.input_dim = input_dim
+        self.linear = nn.Linear(input_dim, input_dim)
+
+    def forward(self, inp):
+        encodings, next_encodings, neg_encodings = inp
+        # encodings is batch x input dim
+        # next_encodings is batch x input dim
+        # neg_encodings is num_neg + 1 x input dim
+        real_scores = torch.sum(self.linear(encodings)*next_encodings, axis=1).unsqueeze(1)  # batch size x 1
+
+        # unsqueeze and repeat so each is batch x num_neg x input_dim
+        unsqueezed_encodings = self.linear(encodings).unsqueeze(1).repeat(1, neg_encodings.size(0), 1)
+        unsqueezed_neg_encodings = neg_encodings.unsqueeze(0).repeat(encodings.size(0), 1, 1)
+        fake_scores = torch.sum(unsqueezed_encodings * unsqueezed_neg_encodings, axis=2)  # batch size x num_neg
+
+        scores = torch.cat([real_scores, fake_scores], axis=1)  # batch size x num_neg+1, first in each row is score for real
+        return scores

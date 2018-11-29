@@ -149,6 +149,12 @@ def train(model: nn.Module,
                     mask = mask.reshape(-1, 1)
                 else:
                     targets = targets.long()
+            elif args.dataset_type == 'nce_pretraining':
+                # TODO(nce) when data is created, you have to store the pairs then, before the list of smiles is shuffled.
+                # then you need to pass the pairs around until you get here. then reshuffle it to get neg samples.
+                # then create targets and mask. mask is all 1, and targets is just tensor of 0's since real is always 0-index out of NCEFFN.
+                # you might not need the stuff you did in MoleculeDataset actually.
+                # then edit it to do validation and testing.
             else:
                 batch = smiles_batch
                 mask = torch.Tensor([[x is not None for x in tb] for tb in target_batch])

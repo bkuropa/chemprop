@@ -6,7 +6,8 @@ from .gan import GAN
 from .jtnn import JTNN
 from .moe import MOE
 from .mpn import MPN
-from chemprop.nn_utils import get_activation_function, initialize_weights, MayrDropout, MayrLinear
+from .ncempn import NCEMPN
+from chemprop.nn_utils import get_activation_function, initialize_weights, MayrDropout, MayrLinear, NCEFFN
 
 
 class MoleculeModel(nn.Module):
@@ -18,6 +19,8 @@ class MoleculeModel(nn.Module):
             self.encoder = JTNN(args)
         elif args.dataset_type == 'bert_pretraining':
             self.encoder = MPN(args, graph_input=True)
+        elif args.dataset_type == 'nce_pretraining':
+            self.encoder = NCEMPN(args)
         else:
             self.encoder = MPN(args)
 
@@ -41,6 +44,10 @@ class MoleculeModel(nn.Module):
             first_linear_dim = args.hidden_size * (1 + args.jtnn)
             if args.use_input_features:
                 first_linear_dim += args.features_dim
+        
+        if args.dataset_type == 'nce_pretraining':
+            self.ffn = NCEFFN(first_linear_dim)
+            return
         
         if args.mayr_layers:
             drop_layer = lambda p: MayrDropout(p)

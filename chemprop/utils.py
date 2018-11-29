@@ -164,6 +164,9 @@ def get_loss_func(args: Namespace) -> nn.Module:
             return nn.MSELoss(reduction='none')
         else:
             return nn.CrossEntropyLoss(reduction='none')
+    
+    if args.dataset_type == 'nce_pretraining':
+        return nn.CrossEntropyLoss(reduction='none')
 
     raise ValueError('Dataset type "{}" not supported.'.format(args.dataset_type))
 
@@ -223,8 +226,14 @@ def get_metric_func(args: Namespace) -> Callable:
         return argmax_accuracy
     
     if metric == 'log_loss':
-        # only supported for unsupervised and bert_pretraining
-        num_labels = args.unsupervised_n_clusters if args.dataset_type == 'unsupervised' else args.vocab.output_size
+        # only supported for unsupervised, bert_pretraining, and nce_pretraining
+        assert args.dataset_type in ['unsupervised', 'bert_pretraining', 'nce_pretraining']
+        if args.dataset_type == 'unsupervised':
+            num_labels = args.unsupervised_n_clusters
+        elif args.dataset_type == 'bert_pretraining':
+            num_labels = args.vocab.output_size
+        elif args.dataset_type == 'nce_pretraining':
+            num_labels = args.nce_neg_samples + 1
 
         def metric_func(targets: List[int], preds: List[List[float]]) -> float:
             return log_loss(targets, preds, labels=range(num_labels))

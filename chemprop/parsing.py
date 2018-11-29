@@ -67,11 +67,12 @@ def add_train_args(parser: ArgumentParser):
                              'and not from the final feed-forward network')
     parser.add_argument('--dataset_type', type=str, required=True,
                         choices=['classification', 'regression', 'regression_with_binning',
-                                 'unsupervised', 'bert_pretraining'],
+                                 'unsupervised', 'bert_pretraining', 'nce_pretraining'],
                         help='Type of dataset, e.g. classification or regression.'
                              'This determines the loss function used during training.'
                              'Unsupervised means using Caron et al pretraining (from FAIR).'
-                             'bert_pretraining means using BERT (Devlin et al) style pretraining (from Google)')
+                             'bert_pretraining means using BERT (Devlin et al) style pretraining (from Google).'
+                             'nce_pretraining means using word2vec style NCE using the ordering in ZINC tranches.')
     parser.add_argument('--unsupervised_n_clusters', type=int, default=10000,
                         help='Number of clusters to use for unsupervised learning labels')
     parser.add_argument('--prespecified_chunks_max_examples_per_epoch', type=int, default=1000000,
@@ -173,6 +174,8 @@ def add_train_args(parser: ArgumentParser):
     parser.add_argument('--additional_output_features', type=str, nargs='*', choices=['functional_group'], default=[],
                         help='Use additional features in bert output features to predict,'
                              'but not in original input atom features. Only supported for bert_vocab_func = feature_vector.')
+    parser.add_argument('--nce_neg_samples', type=int, default=50,
+                        help='Negative samples at a time for NCE')
     parser.add_argument('--last_batch', action='store_true', default=False,
                         help='Whether to include the last batch in each training epoch even if'
                              'it\'s less than the batch size')
@@ -320,6 +323,8 @@ def modify_train_args(args: Namespace):
             else:
                 if args.metric not in ['log_loss', 'argmax_accuracy', 'majority_baseline_accuracy']:
                     args.metric = 'log_loss'
+        elif args.dataset_type == 'nce_pretraining':
+            args.metric = 'log_loss'
         else:
             args.metric = 'rmse'
 
