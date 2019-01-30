@@ -125,6 +125,7 @@ def run_training(args: Namespace, logger: Logger = None) -> List[float]:
             all_split_indices.append(split_indices)
         with open(os.path.join(args.save_dir, 'split_indices.pckl'), 'wb') as f:
             pickle.dump(all_split_indices, f)
+        return [1 for _ in range(args.num_tasks)] # short circuit out when just generating splits
 
     if args.features_scaling:
         features_scaler = train_data.normalize_features(replace_nan_token=None if args.predict_features else 0)
