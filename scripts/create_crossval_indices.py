@@ -62,7 +62,7 @@ def create_crossval_splits(args):
         raise ValueError
     random.shuffle(fold_indices)
     for i in range(args.test_folds_to_test):
-        for j in range(args.val_folds_per_test):
+        for j in range(1, args.val_folds_per_test+1):
             os.makedirs(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j}'), exist_ok=True)
             with open(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j}', 'split_indices.pckl'), 'wb') as wf:
                 val_idx = (i+j) % args.num_folds
