@@ -22,6 +22,8 @@ def split_indices(all_indices, num_folds, scaffold=False, data=None, shuffle=Tru
             length_array = [len(fi) for fi in fold_indices]
             min_index = length_array.index(min(length_array))
             fold_indices[min_index] += s
+        if shuffle:
+            random.shuffle(fold_indices)
     else: # random
         if shuffle:
             random.shuffle(all_indices)
@@ -76,8 +78,8 @@ def create_crossval_splits(args):
     for i in range(args.test_folds_to_test):
         all_splits = []
         for j in range(1, args.val_folds_per_test+1):
-            os.makedirs(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j}'), exist_ok=True)
-            with open(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j}', 'split_indices.pckl'), 'wb') as wf:
+            os.makedirs(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j-1}'), exist_ok=True)
+            with open(os.path.join(args.save_dir, args.split_type, f'fold_{i}', f'{j-1}', 'split_indices.pckl'), 'wb') as wf:
                 val_idx = (i+j) % args.num_folds
                 val = fold_indices[val_idx]
                 test = fold_indices[i]
