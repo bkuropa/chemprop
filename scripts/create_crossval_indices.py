@@ -52,10 +52,10 @@ def create_time_splits(args):
         for i in range(len(fold_indices[split_type])):
             os.makedirs(os.path.join(args.save_dir, split_type, 'fold_' + str(i), '0'), exist_ok=True)
             with open(os.path.join(args.save_dir, split_type, 'fold_' + str(i), '0', 'split_indices.pckl'), 'wb') as wf:
-                train_folds = [fold_indices[split_type][i][j] for j in range(args.time_folds_per_train_set)]
-                train = []
-                for fold in train_folds:
-                    train += fold
+                train = np.concatenate([fold_indices[split_type][i][j] for j in range(args.time_folds_per_train_set)])
+                # train = []
+                # for fold in train_folds:
+                #     train += fold
                 val = fold_indices[split_type][i][-2]
                 test = fold_indices[split_type][i][-1]
                 pickle.dump([train, val, test], wf) # each is a pickle file containing a list of length-3 index lists for train/val/test
