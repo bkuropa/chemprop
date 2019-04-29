@@ -15,34 +15,35 @@ def replace_folds(args):
     crossval_index_path = os.path.join(args.crossval_index_path, args.dataset_size)
     fold_index = 0
     used_some_folds = False
-    for i in range(10):
-        if os.path.exists(os.path.join(crossval_index_path, str(i) + '_opt.pkl')):
-            used_some_folds = True
-            with open(os.path.join(crossval_index_path, str(i) + '_opt.pkl'), 'rb') as f:
-                fold_indices = pickle.load(f)
-                all_splits = []
-                all_opt_splits = []
-                for array in fold_indices:
-                    splits = []
-                    for split in array:
-                        current_split = []
-                        for index in split:
-                            with open(os.path.join(args.crossval_folds_path, args.split_type, str(index) + '.pkl'), 'rb') as f:
-                                indices = pickle.load(f)
-                                current_split.append(indices)
-                        current_split = np.concatenate(current_split)
-                        splits.append(current_split)
-                    assert len(splits) == 3
-                    all_splits.append(splits)
-                    all_opt_splits.append([splits[0], splits[1], splits[1]]) # train, val, val
-            assert len(all_splits) == args.val_folds_per_test
-            for j in range(len(all_splits)):
-                os.makedirs(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', f'{j}'), exist_ok=True)
-                with open(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', f'{j}', 'split_indices.pckl'), 'wb') as wf:
-                    pickle.dump(all_splits[j], wf)
-            with open(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', 'opt_split_indices.pckl'), 'wb') as wf:
-                pickle.dump(all_opt_splits, wf)
-            fold_index += 1
+    if os.path.exists(os.path.join(args.crossval_folds_path, args.split_type, '0.pkl')):
+        for i in range(10):
+            if os.path.exists(os.path.join(crossval_index_path, str(i) + '_opt.pkl')):
+                used_some_folds = True
+                with open(os.path.join(crossval_index_path, str(i) + '_opt.pkl'), 'rb') as f:
+                    fold_indices = pickle.load(f)
+                    all_splits = []
+                    all_opt_splits = []
+                    for array in fold_indices:
+                        splits = []
+                        for split in array:
+                            current_split = []
+                            for index in split:
+                                with open(os.path.join(args.crossval_folds_path, args.split_type, str(index) + '.pkl'), 'rb') as f:
+                                    indices = pickle.load(f)
+                                    current_split.append(indices)
+                            current_split = np.concatenate(current_split)
+                            splits.append(current_split)
+                        assert len(splits) == 3
+                        all_splits.append(splits)
+                        all_opt_splits.append([splits[0], splits[1], splits[1]]) # train, val, val
+                assert len(all_splits) == args.val_folds_per_test
+                for j in range(len(all_splits)):
+                    os.makedirs(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', f'{j}'), exist_ok=True)
+                    with open(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', f'{j}', 'split_indices.pckl'), 'wb') as wf:
+                        pickle.dump(all_splits[j], wf)
+                with open(os.path.join(args.save_dir, args.split_type, f'fold_{fold_index}', 'opt_split_indices.pckl'), 'wb') as wf:
+                    pickle.dump(all_opt_splits, wf)
+                fold_index += 1
     print('used existing folds:', used_some_folds)
 
 if __name__ == '__main__':
