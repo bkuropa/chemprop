@@ -17,9 +17,9 @@ def replace_folds(args):
     used_some_folds = False
     if os.path.exists(os.path.join(args.crossval_folds_path, args.split_type, '0.pkl')):
         for i in range(10):
-            if os.path.exists(os.path.join(crossval_index_path, str(i) + '_opt.pkl')):
+            if os.path.exists(os.path.join(crossval_index_path, str(i) + '_test.pkl')):
                 used_some_folds = True
-                with open(os.path.join(crossval_index_path, str(i) + '_opt.pkl'), 'rb') as f:
+                with open(os.path.join(crossval_index_path, str(i) + '_test.pkl'), 'rb') as f:
                     fold_indices = pickle.load(f)
                     all_splits = []
                     all_opt_splits = []
