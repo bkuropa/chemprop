@@ -48,8 +48,8 @@ def create_time_splits(args):
         fold_indices['scaffold'].append(split_indices(subset_indices, args.time_folds_per_train_set + 2, scaffold=True, data=subset_data))
         fold_indices['time'].append(split_indices(subset_indices, args.time_folds_per_train_set + 2, shuffle=False))
     for split_type in ['random', 'scaffold', 'time']:
-        all_opt_splits = []
         for i in range(len(fold_indices[split_type])):
+            all_opt_splits = []
             os.makedirs(os.path.join(args.save_dir, split_type, 'fold_' + str(i), '0'), exist_ok=True)
             with open(os.path.join(args.save_dir, split_type, 'fold_' + str(i), '0', 'split_indices.pckl'), 'wb') as wf:
                 train = np.concatenate([fold_indices[split_type][i][j] for j in range(args.time_folds_per_train_set)])
@@ -60,8 +60,8 @@ def create_time_splits(args):
                 test = fold_indices[split_type][i][-1]
                 pickle.dump([train, val, test], wf) # each is a pickle file containing a list of length-3 index lists for train/val/test
                 all_opt_splits.append([train, val, val])
-        with open(os.path.join(args.save_dir, split_type, 'fold_' + str(i), 'opt_split_indices.pckl'), 'wb') as wf:
-            pickle.dump(all_opt_splits, wf)
+            with open(os.path.join(args.save_dir, split_type, 'fold_' + str(i), 'opt_split_indices.pckl'), 'wb') as wf:
+                pickle.dump(all_opt_splits, wf)
 
 def create_crossval_splits(args):
     data = get_data(args.data_path)
